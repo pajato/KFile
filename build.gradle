@@ -4,11 +4,11 @@ plugins {
 repositories {
     mavenCentral()
 }
-group 'com.pajato.io'
-version '0.0.1'
+group = GROUP
+version = VERSION_NAME
 
 apply plugin: 'jacoco'
-apply plugin: 'maven-publish'
+//apply plugin: 'maven-publish'
 
 jacoco {
     toolVersion = "0.8.2"
@@ -85,3 +85,5 @@ kotlin {
         }
     }
 }
+
+apply from: 'publish.gradle'
