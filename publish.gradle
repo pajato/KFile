@@ -1,10 +1,11 @@
 // This code is from Kevin Galligan's Stately project via Jake
 // Wharton's (and friend) SQLDelight project.
+
 apply plugin: 'maven-publish'
 apply plugin: 'signing'
 
 def isReleaseBuild() {
-  return VERSION_NAME.contains("SNAPSHOT") == false
+  return !VERSION_NAME.contains("SNAPSHOT")
 }
 
 def getReleaseRepositoryUrl() {
@@ -40,7 +41,7 @@ publishing {
       def root = asNode()
 
       root.children().last() + {
-        resolveStrategy = Closure.DELEGATE_FIRST
+        resolveStrategy = DELEGATE_FIRST
 
         description POM_DESCRIPTION
         name POM_NAME
@@ -83,13 +84,13 @@ publishing {
       }
     }
     maven {
-      name 'test'
+      name = 'test'
       url "file://${rootProject.buildDir}/localMaven"
     }
   }
 }
 
 signing {
-  required { isReleaseBuild() && gradle.taskGraph.hasTask("uploadArchives") }
-  sign(publishing.publications)
+  required { isReleaseBuild() }
+  sign publishing.publications
 }
