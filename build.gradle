@@ -1,33 +1,9 @@
 plugins {
-    id 'kotlin-multiplatform' version '1.3.10'
+    id 'kotlin-multiplatform' version '1.3.11'
 }
+
 repositories {
     mavenCentral()
-}
-group 'com.pajato.io'
-version '0.0.1'
-
-apply plugin: 'jacoco'
-apply plugin: 'maven-publish'
-
-jacoco {
-    toolVersion = "0.8.2"
-}
-
-task coverageReportJVM(type: JacocoReport) {
-    //dependsOn = test
-    group = "Reporting"
-    description = "Generate Jacoco coverage report."
-    classDirectories = fileTree(dir: "$buildDir/classes/kotlin/jvm/main")
-    def coverageSourceDirs = ["src/commonMain/kotlin", "src/jvmMain/kotlin"]
-    additionalSourceDirs = files(coverageSourceDirs)
-    sourceDirectories = files(coverageSourceDirs)
-    executionData = files("$buildDir/jacoco/jvmTest.exec")
-    reports {
-        html.enabled = true
-        xml.enabled = true
-        csv.enabled = false
-    }
 }
 
 final def os = org.gradle.internal.os.OperatingSystem.current()
@@ -46,6 +22,7 @@ kotlin {
         // For Linux, preset should be changed to e.g. presets.linuxX64
         // For MacOS, preset should be changed to e.g. presets.macosX64
     }
+
     sourceSets {
         commonMain {
             dependencies {
@@ -85,3 +62,30 @@ kotlin {
         }
     }
 }
+
+apply plugin: 'jacoco'
+
+jacoco {
+    toolVersion = "0.8.2"
+}
+
+task coverageReportJVM(type: JacocoReport) {
+    //dependsOn = test
+    group = "Reporting"
+    description = "Generate Jacoco coverage report."
+    classDirectories = fileTree(dir: "$buildDir/classes/kotlin/jvm/main")
+    def coverageSourceDirs = ["src/commonMain/kotlin", "src/jvmMain/kotlin"]
+    additionalSourceDirs = files(coverageSourceDirs)
+    sourceDirectories = files(coverageSourceDirs)
+    executionData = files("$buildDir/jacoco/jvmTest.exec")
+    reports {
+        html.enabled = true
+        xml.enabled = true
+        csv.enabled = false
+    }
+}
+
+group = GROUP
+version = VERSION_NAME
+
+apply from: 'publish.gradle'
