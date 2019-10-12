@@ -1,9 +1,11 @@
 package com.pajato.io
 
 import kotlinx.cinterop.CPointer
+import kotlinx.cinterop.addressOf
 import kotlinx.cinterop.memScoped
 import kotlinx.cinterop.refTo
 import kotlinx.cinterop.toKString
+import kotlinx.cinterop.usePinned
 import platform.posix.EAGAIN
 import platform.posix.EBADF
 import platform.posix.EFBIG
@@ -14,7 +16,9 @@ import platform.posix.ENOSPC
 import platform.posix.ENXIO
 import platform.posix.EPIPE
 import platform.posix.FILE
+import platform.posix.F_OK
 import platform.posix.SEEK_SET
+import platform.posix.access
 import platform.posix.fclose
 import platform.posix.fgets
 import platform.posix.fopen
@@ -22,6 +26,7 @@ import platform.posix.fprintf
 import platform.posix.fputs
 import platform.posix.fseek
 import platform.posix.ftell
+import platform.posix.getcwd
 import platform.posix.realpath
 import platform.posix.rewind
 import platform.posix.stderr
@@ -176,4 +181,36 @@ fun Int.toError(): String {
         ENXIO -> MessageENXIO
         else -> "Unrecognized error code: ${this@toError}."
     }
+}
+
+/**
+ * Create a Kotlin file given a file URL (all other scheme's are unsupported and will result in an error).
+ */
+@ExperimentalUnsignedTypes
+actual fun createKFileWithUrl(url: String): KFile {
+    fun getPath(): String {
+        val prefix = "file://localhost"
+        return if (url.startsWith(prefix)) url.substring(prefix.length) else ""
+    }
+    fun convertToKFile(path: String): KFile {
+        val fileNameStartIndex = path.lastIndexOf('/')
+        val dir = path.substring(0, fileNameStartIndex)
+        val name = path.substring(fileNameStartIndex + 1)
+        println("dir: $dir; name: $name")
+        return createKotlinFile(dir, name)
+    }
+    val path = getPath()
+
+    return when {
+        path.isNotEmpty() -> convertToKFile(path)
+        else -> KFileNative(null, "", "", "Invalid URL scheme: $url")
+    }
+}
+
+/** Get the current working directory. */
+actual fun getWorkingDirectory(): String {
+    val cwd = ByteArray(1024)
+
+    cwd.usePinned { getcwd(it.addressOf(0), 1024) }
+    return cwd.toKString()
 }

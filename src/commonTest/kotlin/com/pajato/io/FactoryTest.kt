@@ -5,9 +5,7 @@ import kotlin.test.assertEquals
 import kotlin.test.assertFalse
 import kotlin.test.assertTrue
 
-/**
- * Provide a class to test the KFile factory function.
- */
+/** Provide a class to test the KFile factory functions. */
 class FactoryTest {
     private val tempDir = "build/"
     private val emptyFileDirWithoutFileSeparator = "build"
@@ -113,5 +111,24 @@ class FactoryTest {
         runTest("/", "fred") { uut: KFile ->
             assertTrue(uut.errors.isNotEmpty(), "An attempt to create the file in root (/) did not fail!")
         }
+    }
+
+    @Test fun `when using a valid URL verify that the file is created`() {
+        val absolutePath = "${getWorkingDirectory()}/build/testFile"
+        val url = "file://localhost$absolutePath"
+        val uut = createKFileWithUrl(url)
+
+        assertTrue(url.endsWith(uut.path), "url: $url; path: ${uut.path}")
+    }
+
+    @Test fun `when using an invalid URL verify that an error message is generated`() {
+        val absolutePath = "${getWorkingDirectory()}/build/testFile"
+        val url = "https://localhost$absolutePath"
+        val uut = createKFileWithUrl(url)
+        val errorMessage = "Invalid URL scheme: "
+
+        assertFalse(uut.path.isNotEmpty() && url.endsWith(uut.path), "url: $url; path: ${uut.path}")
+        assertFalse(uut.errors.isEmpty())
+        assertTrue(uut.errors.startsWith(errorMessage), "Wrong error message: ${uut.errors}")
     }
 }
