@@ -1,6 +1,7 @@
 package com.pajato.io
 
 import java.io.File
+import java.net.URL
 
 class KFileJvm(private val kFile: File?, dir: String, name: String, override val errors: String) : KFile {
     override val path: String = if (kFile != null) kFile.path else "$dir:$name"
@@ -28,7 +29,7 @@ class KFileJvm(private val kFile: File?, dir: String, name: String, override val
         return sum
     }
 
-    override fun readLines() = if (kFile != null) kFile.readLines() else listOf()
+    override fun readLines() = kFile?.readLines() ?: listOf()
     // This would be better (but for Jacoco's shortcomings): kFile?.readLines() ?: listOf()
 }
 
@@ -72,3 +73,23 @@ actual fun createKotlinFile(dir: String, name: String): KFile {
 
     return KFileJvm(kFile, dir, name, builder.toString())
 }
+
+actual fun createKFileWithUrl(url: String): KFile {
+    fun convertToKFile(path: String): KFile {
+        val file = File(path)
+        val dir = file.parentFile.name
+        val name = file.name
+        return createKotlinFile(dir, name)
+    }
+    val path = URL(url).let {
+        val protocol = it.protocol
+        if (protocol == "file") it.path else ""
+    }
+    return when {
+        path.isNotEmpty() -> convertToKFile(path)
+        else -> KFileJvm(null, "", "", "Invalid URL scheme: $url")
+    }
+}
+
+/** Get the current working directory. */
+actual fun getWorkingDirectory(): String = System.getProperty("user.dir")
