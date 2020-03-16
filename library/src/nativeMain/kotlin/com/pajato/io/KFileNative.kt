@@ -16,9 +16,7 @@ import platform.posix.ENOSPC
 import platform.posix.ENXIO
 import platform.posix.EPIPE
 import platform.posix.FILE
-import platform.posix.F_OK
 import platform.posix.SEEK_SET
-import platform.posix.access
 import platform.posix.fclose
 import platform.posix.fgets
 import platform.posix.fopen
@@ -211,6 +209,9 @@ actual fun createKFileWithUrl(url: String): KFile {
 actual fun getWorkingDirectory(): String {
     val cwd = ByteArray(1024)
 
-    cwd.usePinned { getcwd(it.addressOf(0), 1024) }
+    cwd.usePinned {
+        @Suppress("EXPERIMENTAL_UNSIGNED_LITERALS")
+        getcwd(it.addressOf(0), 1024u)
+    }
     return cwd.toKString()
 }

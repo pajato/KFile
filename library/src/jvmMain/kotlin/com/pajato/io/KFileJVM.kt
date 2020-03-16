@@ -29,7 +29,10 @@ class KFileJvm(private val kFile: File?, dir: String, name: String, override val
         return sum
     }
 
-    override fun readLines() = kFile?.readLines() ?: listOf()
+    override fun readLines(): List<String> = when (kFile) {
+        null -> listOf()
+        else -> kFile.readLines()
+    }
     // This would be better (but for Jacoco's shortcomings): kFile?.readLines() ?: listOf()
 }
 

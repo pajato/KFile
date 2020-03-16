@@ -1,30 +1,60 @@
+# Generated files
+bin/
+gen/
+out/
+release/
+
 # Gradle
 .gradle/
 build/
-out/
+local.properties
 
 # Intellij (CE) files
-/.idea/$*
-/.idea/artifacts
-/.idea/caches
-/.idea/libraries
-/.idea/modules.xml
-/.idea/workspace.xml
-/.idea/navEditor.xml
-/.idea/assetWizardSettings.xml
 *.iml
+.idea/$*
+.idea/artifacts
+.idea/assetWizardSettings.xml
+.idea/caches
+.idea/gradle.xml
+.idea/libraries
+.idea/misc.xml
+.idea/modules.xml
+.idea/shelf/
+.idea/tasks.xml
+.idea/workspace.xml
+.idea/usage.statistics.xml
 
+# Comment next line if keeping position of elements in Navigation Editor is relevant for you
+.idea/navEditor.xml
+
+# Keystore files
+# Uncomment the following lines if you do not want to check your keystore files in.
+#*.jks
+#*.keystore
+
+# External native build folder generated in Android Studio 2.2 and later
+.externalNativeBuild
+
+# Google Services (e.g. APIs or Firebase)
+# google-services.json
+
+# IntelliJ project files
+#.idea
+out
+gen
+
+### Kotlin template
 # Compiled class file
 *.class
-
-# Log file
-*.log
 
 # BlueJ files
 *.ctxt
 
 # Mobile Tools for Java (J2ME)
 .mtj.tmp/
+
+# Log file
+*.log
 
 # virtual machine crash logs, see http://www.java.com/en/download/help/error_hotspot.xml
 hs_err_pid*
