@@ -1,4 +1,10 @@
 pluginManagement {
+    repositories {
+        google()
+        mavenCentral()
+        maven(url = "https://plugins.gradle.org/m2/")
+        jcenter()
+    }
     resolutionStrategy {
         eachPlugin {
             if (requested.id.id == "kotlin-multiplatform") {
@@ -7,7 +13,9 @@ pluginManagement {
         }
     }
 }
-rootProject.name = 'KFile'
+rootProject.name = "KFile"
 
 
-enableFeaturePreview('GRADLE_METADATA')
+enableFeaturePreview("GRADLE_METADATA")
+
+include(":library")
